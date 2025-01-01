@@ -112,11 +112,15 @@ jobs:
         env:
           THEOS: ${{ github.workspace }}/theos
           
-      - name: Download YouTube IPA
+      - name: Download and Prepare YouTube IPA
         run: |
           wget "$YOUTUBE_URL" --quiet --no-verbose -O main/YouTube.ipa
-          unzip -q main/YouTube.ipa -d main/tmp
-          echo "YT_VERSION=$(grep -A 1 '<key>CFBundleVersion</key>' main/tmp/Payload/YouTube.app/Info.plist | grep '<string>' | awk -F'[><]' '{print $3}')" >> $GITHUB_ENV
+          unzip -q main/YouTube.ipa -d tmp
+          echo "YT_VERSION=$(grep -A 1 '<key>CFBundleVersion</key>' tmp/Payload/YouTube.app/Info.plist | grep '<string>' | awk -F'[><]' '{print $3}')" >> $GITHUB_ENV
+          rm -rf tmp/Payload/YouTube.app/PlugIns/*
+          cp -R main/Extensions/*.appex tmp/Payload/YouTube.app/PlugIns
+          cd tmp
+          zip -r ../YouTube.ipa Payload
         env:
           YOUTUBE_URL: ${{ inputs.decrypted_youtube_url }}
 
@@ -124,7 +128,7 @@ jobs:
         run: |
           mkdir output
           cd tweaks
-          cyan -i ${{ github.workspace }}/main/YouTube.ipa -o ${{ github.workspace }}/output/YTBetterPlus_${{ env.YT_VERSION }}_${{ inputs.ytplus_version }}.ipa -n ${{ inputs.app_name }} -b ${{ inputs.bundle_id }} -u -f $(ls)
+          cyan -i ${{ github.workspace }}/YouTube.ipa -o ${{ github.workspace }}/output/YTBetterPlus_${{ env.YT_VERSION }}_${{ inputs.ytplus_version }}.ipa -n ${{ inputs.app_name }} -b ${{ inputs.bundle_id }} -u -f $(ls)
           
 
       - name: Upload Artifact
