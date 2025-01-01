@@ -112,6 +112,9 @@ jobs:
         env:
           THEOS: ${{ github.workspace }}/theos
           
+      - name: Add YouTube Plus
+        run: wget -P tweaks https://github.com/dayanch96/YTLite/releases/download/v${{ inputs.ytplus_version }}/com.dvntm.ytlite_${{ inputs.ytplus_version }}_iphoneos-arm.deb
+          
       - name: Download and Prepare YouTube IPA
         run: |
           wget "$YOUTUBE_URL" --quiet --no-verbose -O main/YouTube.ipa
