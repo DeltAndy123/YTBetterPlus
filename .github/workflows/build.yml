@@ -61,8 +61,14 @@ jobs:
         with:
           repository: theos/theos
           ref: master
-          path: theos
+          path: ${{ github.workspace }}/theos
           submodules: recursive
+          
+      - name: Checkout YouTubeHeader
+        uses: actions/checkout@v4
+        with:
+          repository: PoomSmart/YouTubeHeader
+          path: ${{ github.workspace }}/theos/include/YouTubeHeader
 
       - name: iOS SDK Caching
         id: SDK
@@ -103,6 +109,8 @@ jobs:
             mv packages/*-arm.deb ${{ github.workspace }}/tweaks
             popd > /dev/null
           done
+        env:
+          THEOS: ${{ github.workspace }}/theos
           
       - name: Download YouTube IPA
         run: |
