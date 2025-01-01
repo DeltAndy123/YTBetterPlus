@@ -1,0 +1,137 @@
+# Credits to https://github.com/YTLitePlus/YTLitePlus/blob/main/.github/workflows/buildapp.yml
+
+name: Build and Release YTBetterPlus
+
+on:
+  workflow_dispatch:
+    inputs:
+      decrypted_youtube_url:
+        description: "Direct URL of the decrypted YouTube IPA"
+        default: ""
+        required: true
+        type: string
+      ytplus_version:
+        description: "Version of YTPlus to use"
+        default: "5.1"
+        required: true
+        type: string
+      bundle_id:
+        description: "Modify the bundle ID"
+        default: "com.google.ios.youtube"
+        required: true
+        type: string
+      app_name:
+        description: "Modify the app name"
+        default: "YouTube"
+        required: true
+        type: string
+      sdk_version:
+        description: "iOS SDK Version"
+        default: "17.5"
+        required: true
+        type: string
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build YTBetterPlus
+    runs-on: macos-13
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Main
+        uses: actions/checkout@v4
+        with:
+          path: main
+          ref: ${{ github.ref }}
+          submodules: recursive
+
+      - name: Install Dependencies
+        run: |
+          brew install ldid dpkg make node pipx
+          pipx ensurepath
+          pipx install --force https://github.com/asdfzxcvbn/pyzule-rw/archive/main.zip
+
+      - name: Download Theos
+        uses: actions/checkout@v4
+        with:
+          repository: theos/theos
+          ref: master
+          path: theos
+          submodules: recursive
+
+      - name: iOS SDK Caching
+        id: SDK
+        uses: actions/cache@v4
+        env:
+          cache-name: iOS-${{ inputs.sdk_version }}-SDK
+        with:
+          path: theos/sdks/
+          key: ${{ env.cache-name }}
+          restore-keys: ${{ env.cache-name }}
+
+      - name: Download iOS SDK
+        if: steps.SDK.outputs.cache-hit != 'true'
+        run: |
+          # Only download the specific SDK version
+          git clone -n --depth=1 --filter=tree:0 https://github.com/aricloverALT/sdks/
+          cd sdks
+          git sparse-checkout set --no-cone iPhoneOS${{ inputs.sdk_version }}.sdk
+          git checkout
+          mv *.sdk $THEOS/sdks
+        env:
+          THEOS: ${{ github.workspace }}/theos
+        
+      - name: Fix Compiling
+        run: |
+          # Update GNU Make to allow for faster building
+          echo "$(brew --prefix make)/libexec/gnubin" >> $GITHUB_PATH
+          (echo export PATH="/usr/local/opt/make/libexec/gnubin:$PATH" >> ~/.bash_profile)
+          source ~/.bash_profile
+
+      - name: Compile Tweaks
+        run: |
+          mkdir tweaks
+          cd main/Tweaks
+          for dir in */; do
+            pushd "$dir" > /dev/null
+            make clean package FINALPACKAGE=1 DEBUG=0
+            mv packages/*-arm.deb ${{ github.workspace }}/tweaks
+            popd > /dev/null
+          done
+          
+      - name: Download YouTube IPA
+        run: |
+          wget "$YOUTUBE_URL" --quiet --no-verbose -O main/YouTube.ipa
+          unzip -q main/YouTube.ipa -d main/tmp
+          echo "YT_VERSION=$(grep -A 1 '<key>CFBundleVersion</key>' main/tmp/Payload/YouTube.app/Info.plist | grep '<string>' | awk -F'[><]' '{print $3}')" >> $GITHUB_ENV
+        env:
+          YOUTUBE_URL: ${{ env.URL_YT }}
+
+      - name: Patch YouTube IPA
+        run: |
+          mkdir output
+          cd tweaks
+          cyan -i ${{ github.workspace }}/main/YouTube.ipa -o ${{ github.workspace }}/output/YTBetterPlus_${{ env.YT_VERSION }}_${{ inputs.ytplus_version }}.ipa -n ${{ inputs.app_name }} -b ${{ inputs.bundle_id }} -u -f $(ls)
+          
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: YTBetterPlus_${{ env.YT_VERSION }}_${{ inputs.ytplus_version }}
+          path: ${{ github.workspace }}/output/YTBetterPlus_${{ env.YT_VERSION }}_${{ inputs.ytplus_version }}.ipa
+          if-no-files-found: error
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ env.YT_VERSION }}-${{ inputs.ytplus_version }}
+          name: v${{ env.YT_VERSION }}-${{ inputs.ytplus_version }} - YTBetterPlus
+          files: output/*.ipa
