@@ -40,3 +40,6 @@
 [submodule "Extensions"]
 	path = Extensions
 	url = https://github.com/CokePokes/YoutubeExtensions.git
+[submodule "Tweaks/Alderis"]
+	path = Tweaks/Alderis
+	url = https://github.com/hbang/Alderis.git
