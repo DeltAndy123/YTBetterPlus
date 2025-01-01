@@ -118,7 +118,7 @@ jobs:
           unzip -q main/YouTube.ipa -d main/tmp
           echo "YT_VERSION=$(grep -A 1 '<key>CFBundleVersion</key>' main/tmp/Payload/YouTube.app/Info.plist | grep '<string>' | awk -F'[><]' '{print $3}')" >> $GITHUB_ENV
         env:
-          YOUTUBE_URL: ${{ env.URL_YT }}
+          YOUTUBE_URL: ${{ inputs.decrypted_youtube_url }}
 
       - name: Patch YouTube IPA
         run: |
