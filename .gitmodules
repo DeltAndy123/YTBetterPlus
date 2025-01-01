@@ -28,9 +28,6 @@
 [submodule "Tweaks/YouLoop"]
 	path = Tweaks/YouLoop
 	url = https://github.com/DeltAndy123/YouLoop.git
-[submodule "Tweaks/iSponsorBlock"]
-	path = Tweaks/iSponsorBlock
-	url = https://github.com/Galactic-Dev/iSponsorBlock.git
 [submodule "Tweaks/YouTimeStamp"]
 	path = Tweaks/YouTimeStamp
 	url = https://github.com/DeltAndy123/YouTimeStamp.git
@@ -40,6 +37,3 @@
 [submodule "Extensions"]
 	path = Extensions
 	url = https://github.com/CokePokes/YoutubeExtensions.git
-[submodule "Tweaks/Alderis"]
-	path = Tweaks/Alderis
-	url = https://github.com/hbang/Alderis.git
