@@ -58,7 +58,7 @@ jobs:
         if: ${{ inputs.use_dearrow }}
         uses: actions/checkout@v4
         with:
-          repository: pixelomer/DeArrow-iOS
+          repository: DeltAndy123/DeArrow-iOS
           ref: main
           path: main/Tweaks/DeArrow
 
