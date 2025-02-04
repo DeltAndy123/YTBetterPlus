@@ -82,6 +82,12 @@ jobs:
           repository: PoomSmart/YouTubeHeader
           path: ${{ github.workspace }}/theos/include/YouTubeHeader
 
+      - name: Checkout PSHeader
+        uses: actions/checkout@v4
+        with:
+          repository: PoomSmart/PSHeader
+          path: ${{ github.workspace }}/theos/include/PSHeader
+
       - name: iOS SDK Caching
         id: SDK
         uses: actions/cache@v4
