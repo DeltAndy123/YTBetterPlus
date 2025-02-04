@@ -55,6 +55,7 @@ jobs:
           submodules: recursive
 
       - name: Checkout DeArrow
+        if: ${{ inputs.use_dearrow }}
         uses: actions/checkout@v4
         with:
           repository: pixelomer/DeArrow-iOS
@@ -142,14 +143,15 @@ jobs:
         run: |
           mkdir output
           cd tweaks
-          cyan -i ${{ github.workspace }}/YouTube.ipa -o ${{ github.workspace }}/output/YTBetterPlus_${{ env.YT_VERSION }}_${{ inputs.ytplus_version }}.ipa -n ${{ inputs.app_name }} -b ${{ inputs.bundle_id }} -u -f $(ls)
+          SUFFIX="${{ inputs.use_dearrow && '_DEARROW' || '' }}"
+          cyan -i ${{ github.workspace }}/YouTube.ipa -o ${{ github.workspace }}/output/YTBetterPlus_${{ env.YT_VERSION }}_${{ inputs.ytplus_version }}${SUFFIX}.ipa -n ${{ inputs.app_name }} -b ${{ inputs.bundle_id }} -u -f $(ls)
           
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: YTBetterPlus_${{ env.YT_VERSION }}_${{ inputs.ytplus_version }}
-          path: ${{ github.workspace }}/output/YTBetterPlus_${{ env.YT_VERSION }}_${{ inputs.ytplus_version }}.ipa
+          name: YTBetterPlus_${{ env.YT_VERSION }}_${{ inputs.ytplus_version }}${{ inputs.use_dearrow && '_DEARROW' || '' }}
+          path: ${{ github.workspace }}/output/YTBetterPlus_${{ env.YT_VERSION }}_${{ inputs.ytplus_version }}${{ inputs.use_dearrow && '_DEARROW' || '' }}.ipa
           if-no-files-found: error
 
       - name: Create Release
