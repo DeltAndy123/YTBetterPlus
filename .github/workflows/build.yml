@@ -15,6 +15,10 @@ on:
         default: "5.1"
         required: true
         type: string
+      use_dearrow:
+        description: "Add the DeArrow tweak (NOTE: WIP, not configurable)"
+        default: false
+        type: boolean
       bundle_id:
         description: "Modify the bundle ID"
         default: "com.google.ios.youtube"
@@ -49,6 +53,13 @@ jobs:
           path: main
           ref: ${{ github.ref }}
           submodules: recursive
+
+      - name: Checkout DeArrow
+        uses: actions/checkout@v4
+        with:
+          repository: pixelomer/DeArrow-iOS
+          ref: main
+          path: main/Tweaks/DeArrow
 
       - name: Install Dependencies
         run: |
