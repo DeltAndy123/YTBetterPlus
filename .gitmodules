@@ -3,7 +3,7 @@
 	url = https://github.com/PoomSmart/YouMute.git
 [submodule "Tweaks/Return-YouTube-Dislikes"]
 	path = Tweaks/Return-YouTube-Dislikes
-	url = https://github.com/aricloverEXALT/Return-YouTube-Dislikes.git
+	url = https://github.com/PoomSmart/Return-YouTube-Dislikes.git
 [submodule "Tweaks/YTABConfig"]
 	path = Tweaks/YTABConfig
 	url = https://github.com/PoomSmart/YTABConfig.git
