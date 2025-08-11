@@ -123,7 +123,7 @@ jobs:
           cd main/Tweaks
           for dir in */; do
             pushd "$dir" > /dev/null
-            make clean package FINALPACKAGE=1 DEBUG=0
+            make clean package FINALPACKAGE=1 DEBUG=0 SIDELOAD=1
             mv packages/*-arm.deb ${{ github.workspace }}/tweaks
             popd > /dev/null
           done
