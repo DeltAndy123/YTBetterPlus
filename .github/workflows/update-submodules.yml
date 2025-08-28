@@ -20,7 +20,7 @@ jobs:
 
       - name: Update submodules
         run: |
-          git submodule update --init --recursive --remote
+          git submodule update --init --recursive --remote $(git submodule status | grep -v 'Tweaks/YTUHD' | awk '{print $2}')
           git add .
           git commit -m "updated submodules"
           git push origin

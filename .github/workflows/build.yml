@@ -15,8 +15,8 @@ on:
         default: "5.1"
         required: true
         type: string
-      use_dearrow:
-        description: "Add the DeArrow tweak (NOTE: WIP, not configurable)"
+      use_new_ytuhd:
+        description: "Use YTUHD 2.0 (NOTE: Will crash with most sideloading methods)"
         default: false
         type: boolean
       bundle_id:
@@ -54,13 +54,13 @@ jobs:
           ref: ${{ github.ref }}
           submodules: recursive
 
-      - name: Checkout DeArrow
-        if: ${{ inputs.use_dearrow }}
-        uses: actions/checkout@v4
-        with:
-          repository: DeltAndy123/DeArrow-iOS
-          ref: main
-          path: main/Tweaks/DeArrow
+      - name: Pull YTUHD 2.0
+        if: ${{ inputs.use_new_ytuhd }}
+        run: |
+          cd main/Tweaks/YTUHD
+          git fetch origin
+          git checkout master
+          git pull origin master
 
       - name: Install Dependencies
         run: |
@@ -149,15 +149,15 @@ jobs:
         run: |
           mkdir output
           cd tweaks
-          SUFFIX="${{ inputs.use_dearrow && '_DEARROW' || '' }}"
+          SUFFIX="${{ inputs.use_new_ytuhd && '_NEW-YTUHD' || '' }}"
           cyan -i ${{ github.workspace }}/YouTube.ipa -o ${{ github.workspace }}/output/YTBetterPlus_${{ env.YT_VERSION }}_${{ inputs.ytplus_version }}${SUFFIX}.ipa -n ${{ inputs.app_name }} -b ${{ inputs.bundle_id }} -u -f $(ls)
           
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: YTBetterPlus_${{ env.YT_VERSION }}_${{ inputs.ytplus_version }}${{ inputs.use_dearrow && '_DEARROW' || '' }}
-          path: ${{ github.workspace }}/output/YTBetterPlus_${{ env.YT_VERSION }}_${{ inputs.ytplus_version }}${{ inputs.use_dearrow && '_DEARROW' || '' }}.ipa
+          name: YTBetterPlus_${{ env.YT_VERSION }}_${{ inputs.ytplus_version }}${{ inputs.use_new_ytuhd && '_NEW-YTUHD' || '' }}
+          path: ${{ github.workspace }}/output/YTBetterPlus_${{ env.YT_VERSION }}_${{ inputs.ytplus_version }}${{ inputs.use_new_ytuhd && '_NEW-YTUHD' || '' }}.ipa
           if-no-files-found: error
 
       - name: Create Release
