@@ -120,10 +120,10 @@ jobs:
       - name: Install libundirect to theos
         run: |
           cd libundirect/
-          sed -i 's/make FINALPACKAGE=1/make FINALPACKAGE=1 ADDITIONAL_LDFLAGS="-Wl,-not_for_dyld_shared_cache"/g' install_to_theos.sh
           ./install_to_theos.sh
         env:
           THEOS: ${{ github.workspace }}/theos
+          ADDITIONAL_LDFLAGS: "-Wl,-not_for_dyld_shared_cache"
 
       - name: Compile Tweaks
         run: |
