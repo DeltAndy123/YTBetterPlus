@@ -38,7 +38,7 @@ concurrency:
 jobs:
   build:
     name: Build YTBetterPlus
-    runs-on: macos-13
+    runs-on: macos-latest
     permissions:
       contents: write
 
