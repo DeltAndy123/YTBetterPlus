@@ -12,13 +12,9 @@ on:
         type: string
       ytplus_version:
         description: "Version of YTPlus to use"
-        default: "5.1"
+        default: "5.2b3"
         required: true
         type: string
-      use_new_ytuhd:
-        description: "Use YTUHD 2.0 (NOTE: Will crash with most sideloading methods)"
-        default: false
-        type: boolean
       bundle_id:
         description: "Modify the bundle ID"
         default: "com.google.ios.youtube"
@@ -54,14 +50,6 @@ jobs:
           ref: ${{ github.ref }}
           submodules: recursive
 
-      - name: Pull YTUHD 2.0
-        if: ${{ inputs.use_new_ytuhd }}
-        run: |
-          cd main/Tweaks/YTUHD
-          git fetch origin
-          git checkout master
-          git pull origin master
-
       - name: Install Dependencies
         run: |
           brew install ldid dpkg make node pipx
@@ -88,11 +76,23 @@ jobs:
           repository: PoomSmart/PSHeader
           path: ${{ github.workspace }}/theos/include/PSHeader
 
+      - name: Checkout libundirect
+        uses: actions/checkout@v4
+        with:
+          repository: opa334/libundirect
+          path: ${{ github.workspace }}/libundirect
+
+      - name: Set up libhooker
+        run: |
+          ln -sf $THEOS/vendor/include/libhooker/libhooker.h $THEOS/include/libhooker.h
+        env:
+          THEOS: ${{ github.workspace }}/theos
+
       - name: iOS SDK Caching
         id: SDK
         uses: actions/cache@v4
         env:
-          cache-name: iOS-${{ inputs.sdk_version }}-SDK
+          cache-name: iOS-${{ inputs.sdk_version }}-14.5-16.2-SDK
         with:
           path: theos/sdks/
           key: ${{ env.cache-name }}
@@ -102,9 +102,9 @@ jobs:
         if: steps.SDK.outputs.cache-hit != 'true'
         run: |
           # Only download the specific SDK version
-          git clone -n --depth=1 --filter=tree:0 https://github.com/aricloverALT/sdks/
-          cd sdks
-          git sparse-checkout set --no-cone iPhoneOS${{ inputs.sdk_version }}.sdk
+          git clone -n --depth=1 --filter=tree:0 https://github.com/xybp888/iOS-SDKs/
+          cd iOS-SDKs/
+          git sparse-checkout set --no-cone iPhoneOS${{ inputs.sdk_version }}.sdk iPhoneOS14.5.sdk iPhoneOS16.2.sdk
           git checkout
           mv *.sdk $THEOS/sdks
         env:
@@ -116,6 +116,14 @@ jobs:
           echo "$(brew --prefix make)/libexec/gnubin" >> $GITHUB_PATH
           (echo export PATH="/usr/local/opt/make/libexec/gnubin:$PATH" >> ~/.bash_profile)
           source ~/.bash_profile
+
+      - name: Install libundirect to theos
+        run: |
+          cd libundirect/
+          sed -i 's/make FINALPACKAGE=1/make FINALPACKAGE=1 ADDITIONAL_LDFLAGS="-Wl,-not_for_dyld_shared_cache"/g' install_to_theos.sh
+          ./install_to_theos.sh
+        env:
+          THEOS: ${{ github.workspace }}/theos
 
       - name: Compile Tweaks
         run: |
@@ -129,6 +137,9 @@ jobs:
           done
         env:
           THEOS: ${{ github.workspace }}/theos
+
+      - name: Copy libundirect to tweaks directory
+        run: cp -v libundirect/.theos/obj/libundirect.dylib tweaks/
           
       - name: Add YouTube Plus
         run: wget -P tweaks https://github.com/dayanch96/YTLite/releases/download/v${{ inputs.ytplus_version }}/com.dvntm.ytlite_${{ inputs.ytplus_version }}_iphoneos-arm.deb
@@ -149,15 +160,15 @@ jobs:
         run: |
           mkdir output
           cd tweaks
-          SUFFIX="${{ inputs.use_new_ytuhd && '_NEW-YTUHD' || '' }}"
+          SUFFIX="${{ '' }}"
           cyan -i ${{ github.workspace }}/YouTube.ipa -o ${{ github.workspace }}/output/YTBetterPlus_${{ env.YT_VERSION }}_${{ inputs.ytplus_version }}${SUFFIX}.ipa -n ${{ inputs.app_name }} -b ${{ inputs.bundle_id }} -u -f $(ls)
           
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: YTBetterPlus_${{ env.YT_VERSION }}_${{ inputs.ytplus_version }}${{ inputs.use_new_ytuhd && '_NEW-YTUHD' || '' }}
-          path: ${{ github.workspace }}/output/YTBetterPlus_${{ env.YT_VERSION }}_${{ inputs.ytplus_version }}${{ inputs.use_new_ytuhd && '_NEW-YTUHD' || '' }}.ipa
+          name: YTBetterPlus_${{ env.YT_VERSION }}_${{ inputs.ytplus_version }}
+          path: ${{ github.workspace }}/output/YTBetterPlus_${{ env.YT_VERSION }}_${{ inputs.ytplus_version }}.ipa
           if-no-files-found: error
 
       - name: Create Release
@@ -169,3 +180,10 @@ jobs:
           tag_name: v${{ env.YT_VERSION }}-${{ inputs.ytplus_version }}
           name: v${{ env.YT_VERSION }}-${{ inputs.ytplus_version }} - YTBetterPlus
           files: output/*.ipa
+          body: |
+            ## Version Details
+            - YouTube: ${{ env.YT_VERSION }}
+            - YouTube Plus: ${{ inputs.ytplus_version }}
+
+            > [!WARNING]
+            > **Do not report issues to YouTube Plus's GitHub repository, as this is an unofficial version that combines many different tweaks, which may cause issues.**
