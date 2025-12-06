@@ -145,10 +145,14 @@ jobs:
         run: wget -P tweaks https://github.com/dayanch96/YTLite/releases/download/v${{ inputs.ytplus_version }}/com.dvntm.ytlite_${{ inputs.ytplus_version }}_iphoneos-arm.deb
           
       - name: Download and Prepare YouTube IPA
+        id: prepare_yt
         run: |
           wget "$YOUTUBE_URL" --quiet --no-verbose -O main/YouTube.ipa
           unzip -q main/YouTube.ipa -d tmp
-          echo "YT_VERSION=$(grep -A 1 '<key>CFBundleVersion</key>' tmp/Payload/YouTube.app/Info.plist | grep '<string>' | awk -F'[><]' '{print $3}')" >> $GITHUB_ENV
+          VERSION=$(grep -A 1 '<key>CFBundleVersion</key>' tmp/Payload/YouTube.app/Info.plist | grep '<string>' | awk -F'[><]' '{print $3}')
+          echo "YT_VERSION=$VERSION" >> $GITHUB_ENV
+          echo "yt_version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version_tag=${VERSION}-${{ inputs.ytplus_version }}" >> $GITHUB_OUTPUT
           rm -rf tmp/Payload/YouTube.app/PlugIns/*
           cp -R main/Extensions/*.appex tmp/Payload/YouTube.app/PlugIns
           cd tmp
@@ -161,14 +165,14 @@ jobs:
           mkdir output
           cd tweaks
           SUFFIX="${{ '' }}"
-          cyan -i ${{ github.workspace }}/YouTube.ipa -o ${{ github.workspace }}/output/YTBetterPlus_${{ env.YT_VERSION }}_${{ inputs.ytplus_version }}${SUFFIX}.ipa -n ${{ inputs.app_name }} -b ${{ inputs.bundle_id }} -u -f $(ls)
+          cyan -i ${{ github.workspace }}/YouTube.ipa -o ${{ github.workspace }}/output/YTBetterPlus_${{ steps.prepare_yt.outputs.version_tag }}${SUFFIX}.ipa -n ${{ inputs.app_name }} -b ${{ inputs.bundle_id }} -u -f $(ls)
           
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: YTBetterPlus_${{ env.YT_VERSION }}_${{ inputs.ytplus_version }}
-          path: ${{ github.workspace }}/output/YTBetterPlus_${{ env.YT_VERSION }}_${{ inputs.ytplus_version }}.ipa
+          name: YTBetterPlus_${{ steps.prepare_yt.outputs.version_tag }}
+          path: ${{ github.workspace }}/output/YTBetterPlus_${{ steps.prepare_yt.outputs.version_tag }}.ipa
           if-no-files-found: error
 
       - name: Create Release
@@ -177,12 +181,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ env.YT_VERSION }}-${{ inputs.ytplus_version }}
-          name: v${{ env.YT_VERSION }}-${{ inputs.ytplus_version }} - YTBetterPlus
+          tag_name: v${{ steps.prepare_yt.outputs.version_tag }}
+          name: v${{ steps.prepare_yt.outputs.version_tag }} - YTBetterPlus
           files: output/*.ipa
           body: |
             ## Version Details
-            - YouTube: ${{ env.YT_VERSION }}
+            - YouTube: ${{ steps.prepare_yt.outputs.yt_version }}
             - YouTube Plus: ${{ inputs.ytplus_version }}
 
             > [!WARNING]
