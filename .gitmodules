@@ -9,7 +9,7 @@
 	url = https://github.com/PoomSmart/YTABConfig.git
 [submodule "Tweaks/YTUHD"]
 	path = Tweaks/YTUHD
-	url = https://github.com/DeltAndy123/YTUHD.git
+	url = https://github.com/Tonwalter888/YTUHD.git
 [submodule "Tweaks/YouQuality"]
 	path = Tweaks/YouQuality
 	url = https://github.com/PoomSmart/YouQuality.git
@@ -43,3 +43,6 @@
 [submodule "Tweaks/YouChooseQuality"]
 	path = Tweaks/YouChooseQuality
 	url = https://github.com/PoomSmart/YouChooseQuality.git
+[submodule "Tweaks/YTweaks"]
+	path = Tweaks/YTweaks
+	url = https://github.com/fosterbarnes/YTweaks.git

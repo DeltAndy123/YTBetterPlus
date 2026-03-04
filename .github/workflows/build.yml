@@ -12,7 +12,7 @@ on:
         type: string
       ytplus_version:
         description: "Version of YTPlus to use"
-        default: "5.2b3"
+        default: "5.2b4"
         required: true
         type: string
       bundle_id:
@@ -76,12 +76,6 @@ jobs:
           repository: PoomSmart/PSHeader
           path: ${{ github.workspace }}/theos/include/PSHeader
 
-      - name: Checkout libundirect
-        uses: actions/checkout@v4
-        with:
-          repository: opa334/libundirect
-          path: ${{ github.workspace }}/libundirect
-
       - name: Set up libhooker
         run: |
           ln -sf $THEOS/vendor/include/libhooker/libhooker.h $THEOS/include/libhooker.h
@@ -98,7 +92,7 @@ jobs:
           key: ${{ env.cache-name }}
           restore-keys: ${{ env.cache-name }}
 
-      - name: Download iOS SDK
+      - name: Download iOS SDKs
         if: steps.SDK.outputs.cache-hit != 'true'
         run: |
           # Only download the specific SDK version
@@ -117,14 +111,6 @@ jobs:
           (echo export PATH="/usr/local/opt/make/libexec/gnubin:$PATH" >> ~/.bash_profile)
           source ~/.bash_profile
 
-      - name: Install libundirect to theos
-        run: |
-          cd libundirect/
-          ./install_to_theos.sh
-        env:
-          THEOS: ${{ github.workspace }}/theos
-          ADDITIONAL_LDFLAGS: "-Wl,-not_for_dyld_shared_cache"
-
       - name: Compile Tweaks
         run: |
           mkdir tweaks
@@ -137,9 +123,6 @@ jobs:
           done
         env:
           THEOS: ${{ github.workspace }}/theos
-
-      - name: Copy libundirect to tweaks directory
-        run: cp -v libundirect/.theos/obj/libundirect.dylib tweaks/
           
       - name: Add YouTube Plus
         run: wget -P tweaks https://github.com/dayanch96/YTLite/releases/download/v${{ inputs.ytplus_version }}/com.dvntm.ytlite_${{ inputs.ytplus_version }}_iphoneos-arm.deb
@@ -188,6 +171,9 @@ jobs:
             ## Version Details
             - YouTube: ${{ steps.prepare_yt.outputs.yt_version }}
             - YouTube Plus: ${{ inputs.ytplus_version }}
+
+            > [!IMPORTANT]
+            > If you are experiencing the "Something went wrong" error when watching a video, enable the "Fix playback issues" option in YTUHD settings.
 
             > [!WARNING]
             > **Do not report issues to YouTube Plus's GitHub repository, as this is an unofficial version that combines many different tweaks, which may cause issues.**

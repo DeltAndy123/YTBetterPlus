@@ -8,7 +8,8 @@ Prepatched IPAs of YouTube with [YouTube Plus (YTLite)](https://github.com/dayan
 ### Tweak List/Credits
 * [YouTube Plus](https://github.com/dayanch96/YTLite) ([dayanch96](https://github.com/dayanch96)): Primary tweak, contains most features, including ad blocking, downloading, UI customization, etc., and also includes [SponsorBlock](https://sponsor.ajay.app/)
 * [Return-YouTube-Dislikes](https://github.com/PoomSmart/Return-YouTube-Dislikes) ([PoomSmart](https://github.com/PoomSmart)): Implements the [Return YouTube Dislike](https://www.returnyoutubedislike.com/) database to show dislike count
-* [YTUHD](https://github.com/PoomSmart/YTUHD) ([PoomSmart](https://github.com/PoomSmart)): Enables viewing 1440p and 4K videos (may or may not work depending on how you sideloaded the app)
+* [YTUHD](https://github.com/Tonwalter888/YTUHD) ([PoomSmart](https://github.com/PoomSmart), forked by [Tonwalter888](https://github.com/Tonwalter888)): Enables viewing 1440p and 4K videos (may or may not work depending on how you sideloaded the app), fixes playback issues ("Something went wrong" error, enable fix in settings)
+* [YTweaks](https://github.com/fosterbarnes/YTweaks) ([fosterbarnes](https://github.com/fosterbarnes)): Miscellaneous tweaks for YouTube
 * [YouChooseQuality](https://github.com/PoomSmart/YouChooseQuality) ([PoomSmart](https://github.com/PoomSmart)): Automatically selects preferred video quality based on device status (Wi-Fi/cellular, AirPlay, low power mode)
 * [DontEatMyContent](https://github.com/therealFoxster/DontEatMyContent) ([therealFoxster](https://github.com/therealFoxster)): Prevent the notch/Dynamic Island from munching on 2:1 video content in YouTube
 * [YTABConfig](https://github.com/PoomSmart/YTABConfig) ([PoomSmart](https://github.com/PoomSmart)): Allows manually activating A/B testing features
