@@ -69,6 +69,17 @@ jobs:
           path: ${{ github.workspace }}/theos
           submodules: recursive
 
+      - name: Pin logos to commit a62370066a97e36d59b200a9fa10c5091f5e8972
+        run: |
+          # theos/logos@777925d broke compiling for some tweaks, so pin to previous commit
+          cd $THEOS/vendor
+          rm -rf logos
+          git clone https://github.com/theos/logos.git logos
+          cd logos
+          git checkout a62370066a97e36d59b200a9fa10c5091f5e8972
+        env:
+          THEOS: ${{ github.workspace }}/theos
+
       - name: Checkout YouTubeHeader
         uses: actions/checkout@v4
         with:
