@@ -1,0 +1,192 @@
+# Credits to https://github.com/YTLitePlus/YTLitePlus/blob/main/.github/workflows/buildapp.yml
+
+name: Build and Release YTBetterPlus with YTPlus
+
+on:
+  workflow_dispatch:
+    inputs:
+      decrypted_youtube_url:
+        description: "Direct URL of the decrypted YouTube IPA"
+        default: ""
+        required: true
+        type: string
+      ytplus_version:
+        description: "Version of YTPlus to use"
+        default: "5.2b4"
+        required: true
+        type: string
+      bundle_id:
+        description: "Modify the bundle ID"
+        default: "com.google.ios.youtube"
+        required: true
+        type: string
+      app_name:
+        description: "Modify the app name"
+        default: "YouTube"
+        required: true
+        type: string
+      sdk_version:
+        description: "iOS SDK Version"
+        default: "17.5"
+        required: true
+        type: string
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build YTBetterPlus
+    runs-on: macos-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Main
+        uses: actions/checkout@v4
+        with:
+          path: main
+          ref: ${{ github.ref }}
+          submodules: recursive
+
+      - name: Install Dependencies
+        run: |
+          brew install ldid dpkg make node pipx
+          pipx ensurepath
+          pipx install --force https://github.com/asdfzxcvbn/pyzule-rw/archive/main.zip
+
+      - name: Download Theos
+        uses: actions/checkout@v4
+        with:
+          repository: theos/theos
+          ref: master
+          path: ${{ github.workspace }}/theos
+          submodules: recursive
+          
+      - name: Checkout YouTubeHeader
+        uses: actions/checkout@v4
+        with:
+          repository: PoomSmart/YouTubeHeader
+          path: ${{ github.workspace }}/theos/include/YouTubeHeader
+
+      - name: Checkout PSHeader
+        uses: actions/checkout@v4
+        with:
+          repository: PoomSmart/PSHeader
+          path: ${{ github.workspace }}/theos/include/PSHeader
+
+      - name: Set up libhooker
+        run: |
+          ln -sf $THEOS/vendor/include/libhooker/libhooker.h $THEOS/include/libhooker.h
+        env:
+          THEOS: ${{ github.workspace }}/theos
+
+      - name: iOS SDK Caching
+        id: SDK
+        uses: actions/cache@v4
+        env:
+          cache-name: iOS-${{ inputs.sdk_version }}-14.5-16.2-SDK
+        with:
+          path: theos/sdks/
+          key: ${{ env.cache-name }}
+          restore-keys: ${{ env.cache-name }}
+
+      - name: Download iOS SDKs
+        if: steps.SDK.outputs.cache-hit != 'true'
+        run: |
+          # Only download the specific SDK version
+          git clone -n --depth=1 --filter=tree:0 https://github.com/xybp888/iOS-SDKs/
+          cd iOS-SDKs/
+          git sparse-checkout set --no-cone iPhoneOS${{ inputs.sdk_version }}.sdk iPhoneOS14.5.sdk iPhoneOS16.2.sdk
+          git checkout
+          mv *.sdk $THEOS/sdks
+        env:
+          THEOS: ${{ github.workspace }}/theos
+        
+      - name: Fix Compiling
+        run: |
+          # Update GNU Make to allow for faster building
+          echo "$(brew --prefix make)/libexec/gnubin" >> $GITHUB_PATH
+          (echo export PATH="/usr/local/opt/make/libexec/gnubin:$PATH" >> ~/.bash_profile)
+          source ~/.bash_profile
+
+      - name: Compile Tweaks
+        run: |
+          mkdir tweaks
+
+          compile_tweaks_in_dir() {
+            local base_dir="$1"
+
+            if [ ! -d "$base_dir" ]; then
+              return 0
+            fi
+
+            for dir in "$base_dir"/*/; do
+              [ -d "$dir" ] || continue
+
+              pushd "$dir" > /dev/null
+              make clean package FINALPACKAGE=1 DEBUG=0 SIDELOAD=1
+              mv packages/*-arm.deb "${{ github.workspace }}/tweaks"
+              popd > /dev/null
+            done
+          }
+
+          compile_tweaks_in_dir "main/Tweaks/Shared"
+          compile_tweaks_in_dir "main/Tweaks/YTPlus"
+        env:
+          THEOS: ${{ github.workspace }}/theos
+          
+      - name: Add YouTube Plus
+        run: wget -P tweaks https://github.com/dayanch96/YTLite/releases/download/v${{ inputs.ytplus_version }}/com.dvntm.ytlite_${{ inputs.ytplus_version }}_iphoneos-arm.deb
+          
+      - name: Download and Prepare YouTube IPA
+        id: prepare_yt
+        run: |
+          wget "$YOUTUBE_URL" --quiet --no-verbose -O main/YouTube.ipa
+          unzip -q main/YouTube.ipa -d tmp
+          VERSION=$(grep -A 1 '<key>CFBundleVersion</key>' tmp/Payload/YouTube.app/Info.plist | grep '<string>' | awk -F'[><]' '{print $3}')
+          echo "YT_VERSION=$VERSION" >> $GITHUB_ENV
+          echo "yt_version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version_tag=${VERSION}-ytplus_${{ inputs.ytplus_version }}" >> $GITHUB_OUTPUT
+          rm -rf tmp/Payload/YouTube.app/PlugIns/*
+          cp -R main/Extensions/*.appex tmp/Payload/YouTube.app/PlugIns
+          cd tmp
+          zip -r ../YouTube.ipa Payload
+        env:
+          YOUTUBE_URL: ${{ inputs.decrypted_youtube_url }}
+
+      - name: Patch YouTube IPA
+        run: |
+          mkdir output
+          cd tweaks
+          SUFFIX="${{ '' }}"
+          cyan -i ${{ github.workspace }}/YouTube.ipa -o ${{ github.workspace }}/output/YTBetterPlus_${{ steps.prepare_yt.outputs.version_tag }}${SUFFIX}.ipa -n ${{ inputs.app_name }} -b ${{ inputs.bundle_id }} -u -f ./*
+          
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: YTBetterPlus_${{ steps.prepare_yt.outputs.version_tag }}
+          path: ${{ github.workspace }}/output/YTBetterPlus_${{ steps.prepare_yt.outputs.version_tag }}.ipa
+          if-no-files-found: error
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.prepare_yt.outputs.version_tag }}
+          name: v${{ steps.prepare_yt.outputs.version_tag }} - YTBetterPlus
+          files: output/*.ipa
+          body: |
+            ## Version Details
+            - YouTube: ${{ steps.prepare_yt.outputs.yt_version }}
+            - YouTube Plus: ${{ inputs.ytplus_version }}
+
+            > [!IMPORTANT]
+            > If you are experiencing the "Something went wrong" error when watching a video, enable the "Fix playback issues" option in YTUHD settings.
+
+            > [!WARNING]
+            > **Do not report issues to YouTube Plus's GitHub repository, as this is an unofficial version that combines many different tweaks, which may cause issues.**

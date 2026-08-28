@@ -1,48 +1,57 @@
-[submodule "Tweaks/YouMute"]
-	path = Tweaks/YouMute
+[submodule "Tweaks/Shared/YouMute"]
+	path = Tweaks/Shared/YouMute
 	url = https://github.com/PoomSmart/YouMute.git
-[submodule "Tweaks/Return-YouTube-Dislikes"]
-	path = Tweaks/Return-YouTube-Dislikes
+[submodule "Tweaks/Shared/Return-YouTube-Dislikes"]
+	path = Tweaks/Shared/Return-YouTube-Dislikes
 	url = https://github.com/PoomSmart/Return-YouTube-Dislikes.git
-[submodule "Tweaks/YTABConfig"]
-	path = Tweaks/YTABConfig
+[submodule "Tweaks/Shared/YTABConfig"]
+	path = Tweaks/Shared/YTABConfig
 	url = https://github.com/PoomSmart/YTABConfig.git
-[submodule "Tweaks/YTUHD"]
-	path = Tweaks/YTUHD
+[submodule "Tweaks/Shared/YTUHD"]
+	path = Tweaks/Shared/YTUHD
 	url = https://github.com/Tonwalter888/YTUHD.git
-[submodule "Tweaks/YouQuality"]
-	path = Tweaks/YouQuality
+[submodule "Tweaks/Shared/YouQuality"]
+	path = Tweaks/Shared/YouQuality
 	url = https://github.com/PoomSmart/YouQuality.git
-[submodule "Tweaks/DontEatMyContent"]
-	path = Tweaks/DontEatMyContent
+[submodule "Tweaks/Shared/DontEatMyContent"]
+	path = Tweaks/Shared/DontEatMyContent
 	url = https://github.com/therealFoxster/DontEatMyContent.git
-[submodule "Tweaks/YTVideoOverlay"]
-	path = Tweaks/YTVideoOverlay
+[submodule "Tweaks/Shared/YTVideoOverlay"]
+	path = Tweaks/Shared/YTVideoOverlay
 	url = https://github.com/PoomSmart/YTVideoOverlay.git
-[submodule "Tweaks/YouPiP"]
-	path = Tweaks/YouPiP
+[submodule "Tweaks/Shared/YouPiP"]
+	path = Tweaks/Shared/YouPiP
 	url = https://github.com/PoomSmart/YouPiP.git
-[submodule "Tweaks/YouGroupSettings"]
-	path = Tweaks/YouGroupSettings
+[submodule "Tweaks/Shared/YouGroupSettings"]
+	path = Tweaks/Shared/YouGroupSettings
 	url = https://github.com/PoomSmart/YouGroupSettings.git
-[submodule "Tweaks/YouLoop"]
-	path = Tweaks/YouLoop
+[submodule "Tweaks/Shared/YouLoop"]
+	path = Tweaks/Shared/YouLoop
 	url = https://github.com/DeltAndy123/YouLoop.git
-[submodule "Tweaks/YouTimeStamp"]
-	path = Tweaks/YouTimeStamp
-	url = https://github.com/DeltAndy123/YouTimeStamp.git
-[submodule "Tweaks/YTHoldForSpeed"]
-	path = Tweaks/YTHoldForSpeed
+[submodule "Tweaks/Shared/YTHoldForSpeed"]
+	path = Tweaks/Shared/YTHoldForSpeed
 	url = https://github.com/aricloverEXALT/YTHoldForSpeed-Sideloaded.git
 [submodule "Extensions"]
 	path = Extensions
 	url = https://github.com/CokePokes/YoutubeExtensions.git
-[submodule "Tweaks/YouSpeed"]
-	path = Tweaks/YouSpeed
+[submodule "Tweaks/Shared/YouSpeed"]
+	path = Tweaks/Shared/YouSpeed
 	url = https://github.com/PoomSmart/YouSpeed.git
-[submodule "Tweaks/YouChooseQuality"]
-	path = Tweaks/YouChooseQuality
+[submodule "Tweaks/Shared/YouChooseQuality"]
+	path = Tweaks/Shared/YouChooseQuality
 	url = https://github.com/PoomSmart/YouChooseQuality.git
-[submodule "Tweaks/YTweaks"]
-	path = Tweaks/YTweaks
+[submodule "Tweaks/Shared/YTweaks"]
+	path = Tweaks/Shared/YTweaks
 	url = https://github.com/fosterbarnes/YTweaks.git
+[submodule "Tweaks/YouMod/youtube-native-share"]
+	path = Tweaks/YouMod/youtube-native-share
+	url = https://github.com/jkhsjdhjs/youtube-native-share.git
+[submodule "Tweaks/Shared/YouShare"]
+	path = Tweaks/Shared/YouShare
+	url = https://github.com/Tonwalter888/YouShare.git
+[submodule "Tweaks/Shared/YouGetCaption"]
+	path = Tweaks/Shared/YouGetCaption
+	url = https://github.com/PoomSmart/YouGetCaption.git
+[submodule "Tweaks/Shared/VolumeBoostYT"]
+	path = Tweaks/Shared/VolumeBoostYT
+	url = https://github.com/VasirakCalgux/VolumeBoostYT.git
