@@ -20,7 +20,7 @@ Prepatched IPAs of YouTube with [YouTube Plus (YTLite)](https://github.com/dayan
 * [YTABConfig](https://github.com/PoomSmart/YTABConfig) ([PoomSmart](https://github.com/PoomSmart)): Allows manually activating A/B testing features
 * [YTHoldForSpeed](https://github.com/joshuaseltzer/YTHoldForSpeed) ([joshuaseltzer](https://github.com/joshuaseltzer)): Allows changing the tap and hold gesture to toggle between speeds instead of temporarily changing speed
 * [YouGroupSettings](https://github.com/PoomSmart/YouGroupSettings) ([PoomSmart](https://github.com/PoomSmart)): Groups all the tweak settings (except YouTube Plus) into a separate section in settings
-* [VolumeBoostYT](https://github.com/VasirakCalgux/VolumeBoostYT) ([VasirakCalgux](https://github.com/VasirakCalgux)): Adds in-app volume control independent from system volume
+* [VolumeBoostYT](https://github.com/candyzp/VolumeBoostYT) ([irum0320](https://github.com/irum0320), forked by [candyzp](https://github.com/candyzp)): Adds in-app volume control independent from system volume
 * [YTVideoOverlay](https://github.com/PoomSmart/YTVideoOverlay) ([PoomSmart](https://github.com/PoomSmart)): Helper tweak to add buttons in the video overlay for all tweaks below:
   * [YouPiP](https://github.com/PoomSmart/YouPiP) ([PoomSmart](https://github.com/PoomSmart)): Enables PiP by either dismissing app, or new button in the video overlay
   * [YouLoop](https://github.com/bhackel/YouLoop) ([bhackel](https://github.com/bhackel)): Adds a button in the video overlay to enable or disable video looping
