@@ -111,6 +111,23 @@ jobs:
           (echo export PATH="/usr/local/opt/make/libexec/gnubin:$PATH" >> ~/.bash_profile)
           source ~/.bash_profile
 
+      - name: Patch tweak SDK targets
+        run: |
+          echo "Available SDKs:"
+          ls -1 "$THEOS/sdks" || true
+
+          echo "Patching hardcoded iOS SDK targets to latest..."
+          grep -R "TARGET.*iphone:clang:" -n main/Tweaks || true
+
+          find main/Tweaks -name Makefile -type f -print0 | while IFS= read -r -d '' file; do
+            perl -0pi -e 's/iphone:clang:[0-9]+(?:\.[0-9]+)*:/iphone:clang:latest:/g' "$file"
+          done
+
+          echo "After patch:"
+          grep -R "TARGET.*iphone:clang:" -n main/Tweaks || true
+        env:
+          THEOS: ${{ github.workspace }}/theos
+
       - name: Compile Tweaks
         run: |
           mkdir tweaks
