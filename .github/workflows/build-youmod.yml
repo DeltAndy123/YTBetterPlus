@@ -225,7 +225,7 @@ jobs:
             - YouMod: ${{ inputs.youmod_version }}
 
             > [!IMPORTANT]
-            > If you are experiencing the "Something went wrong" error when watching a video, enable the "Fix playback issues" option in YTUHD settings.
+            > If you are experiencing the "Something went wrong" error when watching a video, go to YTUHD settings in YouTube, and try disabling "Use AV1". If that doesn't work, enable "Fix playback issues".
 
             > [!WARNING]
             > **Do not report issues to YouMod's GitHub repository, as this is an unofficial version that combines many different tweaks, which may cause issues.**

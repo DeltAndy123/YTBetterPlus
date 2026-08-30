@@ -6,10 +6,10 @@
 Prepatched IPAs of YouTube with [YouTube Plus (YTLite)](https://github.com/dayanch96/YTLite) or [YouMod](https://github.com/Tonwalter888/YouMod), alongside other tweaks
 
 ### Tweak List/Credits
-#### Base Tweak (Primary tweak, contains ad-blocking)
-* [YouTube Plus](https://github.com/dayanch96/YTLite) ([dayanch96](https://github.com/dayanch96)): Also includes downloading, UI customization, etc, and has [SponsorBlock](https://sponsor.ajay.app/) integrated
-* [YouMod](https://github.com/Tonwalter888/YouMod) ([Tonwalter888](https://github.com/Tonwalter888)): Also includes UI customization
-  * *Note: This tweak does not include video downloading or SponsorBlock*
+#### Base Tweak (Primary tweak, contains ad-blocking, downloading, customization features, and [SponsorBlock](https://sponsor.ajay.app/) integration)
+* [YouTube Plus](https://github.com/dayanch96/YTLite) ([dayanch96](https://github.com/dayanch96))
+  * **NOTE**: This tweak requires a paid subscription for versions after 5.2b4, and [5.2b4 only supports up to YouTube 21.13.6](https://github.com/DeltAndy123/YTBetterPlus/issues/1). Due to this, there won't be any releases with YouTube Plus for now.
+* [YouMod](https://github.com/Tonwalter888/YouMod) ([Tonwalter888](https://github.com/Tonwalter888))
 
 #### Additional Tweaks
 * [Return-YouTube-Dislikes](https://github.com/PoomSmart/Return-YouTube-Dislikes) ([PoomSmart](https://github.com/PoomSmart)): Implements the [Return YouTube Dislike](https://www.returnyoutubedislike.com/) database to show dislike count
@@ -32,5 +32,6 @@ Prepatched IPAs of YouTube with [YouTube Plus (YTLite)](https://github.com/dayan
 * [YoutubeExtensions](https://github.com/CokePokes/YoutubeExtensions) ([CokePokes](https://github.com/CokePokes)): Adds a share sheet button and Safari extension to open video URL in the YouTube app
 
 **YouMod Only Tweaks**
-> These are only for the YouMod version of YTBetterPlus because YTPlus already has this feature integrated
+> [!NOTE]
+> These are only for the YouMod version of YTBetterPlus, as YouTube Plus already has the features from these tweaks integrated
 * [youtube-native-share](https://github.com/jkhsjdhjs/youtube-native-share) ([jkhsjdhjs](https://github.com/jkhsjdhjs)): Make YouTube's share video button use the native share sheet instead of the custom one
